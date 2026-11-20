@@ -1,0 +1,123 @@
+name: Node quality
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: Directory that contains package.json
+        type: string
+        default: .
+        required: false
+      node_version:
+        description: Node version for the caller
+        type: string
+        default: "24"
+        required: false
+      test_command:
+        description: Command that writes coverage/coverage-summary.json
+        type: string
+        default: npm test -- --coverage --coverage.reporter=json-summary
+        required: false
+      lint_command:
+        description: Lint command
+        type: string
+        default: npx eslint .
+        required: false
+      typecheck_command:
+        description: Typecheck command
+        type: string
+        default: npx tsc --noEmit
+        required: false
+      statement_coverage:
+        description: Minimum statement coverage (NODE-TEST-002 default)
+        type: number
+        default: 95
+        required: false
+      branch_coverage:
+        description: Minimum branch coverage (NODE-TEST-002 default)
+        type: number
+        default: 95
+        required: false
+      devops_ref:
+        description: Commit or tag of this repo matching the uses pin (CI-034)
+        type: string
+        default: ""
+        required: false
+    secrets:
+      checkout_token:
+        description: Optional token when this repository is private
+        required: false
+
+permissions: {}
+
+concurrency:
+  group: node-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+    steps:
+      - name: Check out the caller
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Require devops_ref for cross-repo callers
+        env:
+          REF: ${{ inputs.devops_ref }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ "${REPO}" != "pirlruc/nodedevops" ] && [ -z "${REF}" ]; then
+            echo "CI-034: pass devops_ref equal to the uses pin" >&2
+            exit 1
+          fi
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: npm
+          cache-dependency-path: ${{ inputs.working_directory }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        env:
+          LINT: ${{ inputs.lint_command }}
+        run: bash -lc "${LINT}"
+
+      - name: Typecheck
+        env:
+          TYPECHECK: ${{ inputs.typecheck_command }}
+        run: bash -lc "${TYPECHECK}"
+
+      - name: Test
+        env:
+          TEST: ${{ inputs.test_command }}
+        run: bash -lc "${TEST}"
+
+      - name: Check out nodedevops scripts
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: pirlruc/nodedevops
+          ref: ${{ inputs.devops_ref || github.sha }}
+          path: .nodedevops
+          persist-credentials: false
+
+      - name: Enforce coverage floors
+        env:
+          STATEMENTS: ${{ inputs.statement_coverage }}
+          BRANCHES: ${{ inputs.branch_coverage }}
+        run: node "${GITHUB_WORKSPACE}/.nodedevops/scripts/check-coverage.mjs"
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high

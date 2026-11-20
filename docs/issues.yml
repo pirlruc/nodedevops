@@ -1,0 +1,30 @@
+milestones:
+  - name: Foundation
+    epics:
+      - id: NDO-001
+        status: done
+        title: Publish a reusable Node quality workflow
+        overview:
+          problem: >-
+            A Node repository has no shared workflow for ESLint, tsc,
+            coverage floors, and npm audit.
+          goal: >-
+            node-quality runs those checks and reads the org coverage
+            floors as inputs.
+        decision: >-
+          In the context of a Node repository, facing copied lint jobs,
+          we decided one reusable workflow with coverage inputs at the
+          org floors, to achieve one pin for every caller, accepting
+          that the caller still owns the test command.
+        acceptance_criteria:
+          - node-quality.yml runs ESLint, tsc, tests, coverage, and npm audit
+          - Coverage defaults are 95 statement and 95 branch
+        tasks:
+          - id: NDO-001-T1
+            status: done
+            title: Add the node-quality workflow
+            instructions:
+              files:
+                - .github/workflows/node-quality.yml
+            verification:
+              - actionlint .github/workflows/node-quality.yml

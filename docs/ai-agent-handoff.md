@@ -21,4 +21,6 @@ sh scripts/check-ci-local.sh
 
 The analog submodules are private. A public caller checkout does not clone them unless it has a read token. Coverage floors are workflow inputs so the job does not need the private pack at runtime.
 
-*Last updated: 2026-11-20 — initial node-quality workflow.*
+`ci.yml` infra-lint must grant `packages: read`. The reusable workflow declares that permission (CI-028). A caller that grants only `contents: read` fails at startup with no jobs.
+
+*Last updated: 2026-11-21 — infra-lint grants packages: read so CI can start.*

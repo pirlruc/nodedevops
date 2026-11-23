@@ -9,7 +9,6 @@ Runs on pull request and on push to `main`.
 | infra-lint | `common-infra-lint` |
 | pins | `common-pins-verify` |
 | docs | `common-doc-verify` with `run_hygiene: true` |
-| scaffold | `common-scaffold-verify` |
 | secrets-sast | `common-secrets-sast` |
 | scorecard | `common-scorecard` (advisory) |
 

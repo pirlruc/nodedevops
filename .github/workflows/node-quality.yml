@@ -110,6 +110,7 @@ jobs:
         with:
           repository: pirlruc/nodedevops
           ref: ${{ inputs.devops_ref || github.sha }}
+          token: ${{ secrets.checkout_token || github.token }}
           path: .nodedevops
           persist-credentials: false
 

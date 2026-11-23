@@ -15,9 +15,9 @@ jobs:
       node_version: "24"
 ```
 
-The CI image is `node:24-bookworm-slim`, digest-pinned in the Dockerfile. It runs as uid 10001.
+Callers install Node with `actions/setup-node`. This repository does not publish a CI image.
 
 ## Documentation
 
 - [Workflow example](examples/call-node-quality.yml)
-- [Handoff](docs/ai-agent-handoff.md)
+- [Workflows](docs/workflows.md)

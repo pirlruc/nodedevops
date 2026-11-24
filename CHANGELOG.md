@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-24
+
+### Added
+
+- Self-CI calls `ops-repo-ci` from commondevops v6.10.0. A Friday schedule runs the same reusable with Scorecard.
+
 ## [1.2.0] - 2026-11-24
 
 ### Added

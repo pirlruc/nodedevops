@@ -9,9 +9,9 @@ jobs:
   node-quality:
     permissions:
       contents: read
-    uses: pirlruc/nodedevops/.github/workflows/node-quality.yml@1.0.0
+    uses: pirlruc/nodedevops/.github/workflows/node-quality.yml@1.2.0
     with:
-      devops_ref: 1.0.0
+      devops_ref: 1.2.0
       node_version: "24"
 ```
 

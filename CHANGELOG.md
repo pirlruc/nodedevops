@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-24
+
+### Added
+
+- `ci.yml` calls `node-quality` on `fixtures/smoke`.
+
+### Changed
+
+- Self-CI pins commondevops v6.9.0.
+- `gitsubmodule` is outside the multi-ecosystem Dependabot group (SC-DEP-004).
+- The security policy names private vulnerability reporting.
+
+## [1.1.0] - 2026-11-21
+
 ### Added
 
 - `ci.yml` runs doc verification, scaffold verification, secret scanning, and Scorecard.
